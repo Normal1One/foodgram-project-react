@@ -34,4 +34,4 @@ docker-compose exec backend python manage.py loadjson --path 'api/data/ingredien
 Никита Лавров
 
 ### Адрес сервера
-http://51.250.104.136/api/v1
+http://51.250.96.87/
