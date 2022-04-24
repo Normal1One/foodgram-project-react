@@ -33,7 +33,8 @@ class MyUserViewSet(UserViewSet):
         follow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(methods=['GET'], detail=False, permission_classes=[permissions.IsAuthenticated],
+    @action(methods=['GET'], detail=False,
+            permission_classes=[permissions.IsAuthenticated],
             url_path='subscriptions', url_name='subscriptions')
     def subscriptions(self, request):
         queryset = Follow.objects.filter(user=request.user)
