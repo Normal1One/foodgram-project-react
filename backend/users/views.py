@@ -22,12 +22,12 @@ class MyUserViewSet(UserViewSet):
         author = get_object_or_404(User, id=id)
         if request.user == author:
             return Response({'error': 'Нельзя подписаться на сомого себя'})
-        serializer = FollowSerializer(
-            data={'user': request.user.id, 'author': id}
-        )
         if request.method == 'POST':
-            serializer.is_valid(raise_exception=True)
-            serializer.save(user=request.user)
+            follow = Follow.objects.create(user=request.user, author=author)
+            serializer = FollowSerializer(
+                follow,
+                context={'request': request}
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         follow = Follow.objects.filter(user=request.user, author=author)
         follow.delete()
