@@ -142,7 +142,7 @@ class FollowSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         return Follow.objects.filter(
-            user=self.context.get('request').user, author=obj.author).exists()
+            user=obj.user, author=obj.author).exists()
 
     def get_recipes(self, obj):
         queryset = obj.author.recipes.all()
