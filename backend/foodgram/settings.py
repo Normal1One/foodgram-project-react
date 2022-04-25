@@ -124,7 +124,7 @@ REST_FRAMEWORK = {
 
 LANGUAGE_CODE = 'ru-RU'
 
-TIME_ZONE = 'UTC+3'
+TIME_ZONE = 'Russia/Moscow'
 
 USE_I18N = True
 
