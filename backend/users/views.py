@@ -19,14 +19,12 @@ class MyUserViewSet(UserViewSet):
             detail=True, permission_classes=[permissions.IsAuthenticated],
             url_path='subscribe', url_name='subscribe')
     def subscribe(self, request, id=None):
-        user = request.user
         author = get_object_or_404(User, id=id)
-        if user == author:
+        if request.user == author:
             return Response({'error': 'Нельзя подписаться на сомого себя'})
         if request.method == 'POST':
-            follow = Follow.objects.create(user=user, author=author)
             serializer = FollowSerializer(
-                follow, context={'request': request}
+                data={'user': request.user.id, 'author': id}
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         follow = Follow.objects.filter(user=user, author=author)
