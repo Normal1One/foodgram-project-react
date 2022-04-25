@@ -14,9 +14,10 @@ class RecipeAdmin(admin.ModelAdmin):
     list_editable = ['author', 'name']
     list_filter = ['author', 'tags']
 
-    @admin.display(empty_value='0')
     def view_count(self, obj):
         return obj.count
+
+    view_count.empty_value_display = 0
 
 
 @admin.register(Ingredient)
