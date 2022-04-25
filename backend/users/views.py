@@ -27,7 +27,7 @@ class MyUserViewSet(UserViewSet):
                 data={'user': request.user.id, 'author': id}
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        follow = Follow.objects.filter(user=user, author=author)
+        follow = Follow.objects.filter(user=request.user, author=author)
         follow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
