@@ -14,7 +14,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_editable = ['author', 'name']
     list_filter = ['author', 'tags']
 
-    def view_count(self, obj):
+    def count(self, obj):
         return obj.favotites.count()
 
 
