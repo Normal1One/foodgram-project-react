@@ -4,6 +4,7 @@ from djoser.views import UserViewSet
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
+
 from api.models import Follow
 from api.serializers import FollowSerializer
 from api.pagination import FoodgramPagination

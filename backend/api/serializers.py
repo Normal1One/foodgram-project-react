@@ -133,7 +133,7 @@ class FollowSerializer(serializers.ModelSerializer):
     email = serializers.ReadOnlyField(source='author.email')
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
+    recipes_count = serializers.ReadOnlyField(source='author.recies.count')
 
     class Meta:
         model = Follow
@@ -145,11 +145,8 @@ class FollowSerializer(serializers.ModelSerializer):
             user=self.context.get('request').user, author=obj.author).exists()
 
     def get_recipes(self, obj):
-        queryset = Recipe.objects.filter(author=obj.author)
+        queryset = obj.author.recipes.all()
         return RecipeReadSerializer(queryset, many=True).data
-
-    def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj.author).count()
 
 
 class FavoriteAndShoppingCartSerializer(serializers.ModelSerializer):
