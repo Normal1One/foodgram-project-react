@@ -35,3 +35,6 @@ docker-compose exec backend python manage.py loadjson --path 'api/data/ingredien
 
 ### Адрес сервера
 http://51.250.96.87/
+
+Email администратора: admin@gmail.com
+Password администратора: admin
