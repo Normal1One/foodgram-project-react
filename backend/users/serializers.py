@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
@@ -16,7 +17,7 @@ class CustomUserSerializer(UserSerializer):
                   'first_name', 'last_name', 'is_subscribed')
 
     def get_is_subscribed(self, obj):
-        user = self.context.user
+        user = get_object_or_404(User, pk=self.initial_data.get('user'))
         print(self.context)
         if user.is_anonymous:
             return False
