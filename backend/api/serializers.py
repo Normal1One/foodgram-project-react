@@ -133,7 +133,7 @@ class FollowSerializer(serializers.ModelSerializer):
     email = serializers.ReadOnlyField(source='author.email')
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.ReadOnlyField(source='author.recies.count')
+    recipes_count = serializers.ReadOnlyField(source='author.recipes.count')
 
     class Meta:
         model = Follow
