@@ -170,6 +170,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Этот рецепт уже есть в избранном'
             )
+        return attrs
 
     def create(self, validated_data):
         user = validated_data['user']
@@ -193,6 +194,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Этот рецепт уже есть в списке покупок'
             )
+        return attrs
 
     def create(self, validated_data):
         user = validated_data['user']
