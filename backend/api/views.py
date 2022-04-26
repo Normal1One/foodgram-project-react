@@ -48,7 +48,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.save(recipe=recipe, user=request.user)
             serializer = FavoriteAndShoppingCartSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        obj = Favorite.objects.filter(user=request.user, recipe__id=pk)
+        obj = Favorite.objects.get(user=request.user, recipe__id=pk)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -65,7 +65,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.save(recipe=recipe, user=request.user)
             serializer = FavoriteAndShoppingCartSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        obj = ShoppingCart.objects.filter(user=request.user, recipe__id=pk)
+        obj = ShoppingCart.objects.get(user=request.user, recipe__id=pk)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
