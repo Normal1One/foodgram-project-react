@@ -15,7 +15,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ['author', 'tags']
 
     def count(self, obj):
-        return obj.favotites.count()
+        return obj.favorite.count()
 
 
 @admin.register(Ingredient)
