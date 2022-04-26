@@ -12,7 +12,7 @@ from .serializers import (FavoriteAndShoppingCartSerializer,
 from .permissions import IsAdminAuthorOrReadOnly
 from .models import (IngredientAmount, ShoppingCart, Favorite, Recipe,
                      Tag, Ingredient)
-from .filters import IngredientsFilter, RecipesFilter
+from .filters import IngredientsFilter
 
 
 class TagViewSet(viewsets.ModelViewSet):
