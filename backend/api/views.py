@@ -47,10 +47,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.save(recipe=recipe, user=request.user)
             serializer = FavoriteAndShoppingCartSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        if request.method == 'DELETE':
-            obj = Favorite.objects.get(user=request.user, recipe__id=pk)
-            obj.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        obj = Favorite.objects.get(user=request.user, recipe__id=pk)
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['POST', 'DELETE'], detail=True,
             permission_classes=[permissions.IsAuthenticated],
