@@ -58,7 +58,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipeReadSerializer
         return RecipeWriteSerializer
 
-    @action(methods=['POST', 'DELETE'], detail=True,
+    @action(methods=['GET', 'DELETE'], detail=True,
             permission_classes=[permissions.IsAuthenticated],
             url_path='favorite', url_name='favorite')
     def favorite(self, request, pk):
@@ -66,7 +66,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer = FavoriteSerializer(
             data={'user': request.user.id, 'recipe': recipe.id}
         )
-        if request.method == 'POST':
+        if request.method == 'GET':
             serializer.is_valid(raise_exception=True)
             serializer.save(recipe=recipe)
             serializer = FavoriteAndShoppingCartSerializer(recipe)
