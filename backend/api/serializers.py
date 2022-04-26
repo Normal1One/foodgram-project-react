@@ -117,15 +117,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return instance
 
 
-class RecipeReadSerializer(RecipeWriteSerializer):
-    tags = TagSerializer(read_only=True, many=True)
-    image = serializers.ImageField()
-
-    class Meta:
-        model = Recipe
-        fields = '__all__'
-
-
 class FollowSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='author.id')
     username = serializers.ReadOnlyField(source='author.uesrname')
@@ -147,7 +138,7 @@ class FollowSerializer(serializers.ModelSerializer):
 
     def get_recipes(self, obj):
         queryset = obj.author.recipes.all()
-        return RecipeReadSerializer(queryset, many=True).data
+        return RecipeWriteSerializer(queryset, many=True).data
 
 
 class FavoriteAndShoppingCartSerializer(serializers.ModelSerializer):
