@@ -1,8 +1,6 @@
-from django_filters import BooleanFilter
+from django_filters import (
+    BooleanFilter, FilterSet, CharFilter, AllValuesMultipleFilter)
 from django_filters.widgets import BooleanWidget
-from django_filters.rest_framework import (FilterSet,
-                                           CharFilter,
-                                           AllValuesMultipleFilter)
 
 from .models import Ingredient, Recipe
 
