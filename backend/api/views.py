@@ -67,7 +67,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         if request.method == 'GET':
             serializer.is_valid(raise_exception=True)
-            serializer.save(recipe=recipe)
+            serializer.save(recipe=recipe, user=request.user)
             serializer = FavoriteAndShoppingCartSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         obj = get_object_or_404(Favorite, user=request.user, recipe__id=pk)
