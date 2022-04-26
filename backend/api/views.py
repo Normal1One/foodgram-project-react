@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework import viewsets, permissions, status
 
 from .pagination import FoodgramPagination
-from .serializers import (FavoriteAndShoppingCartSerializer,
+from .serializers import (FavoriteAndShoppingCartSerializer, FavoriteSerializer, FollowSerializer,
                           RecipeReadSerializer,
                           RecipeWriteSerializer,
                           TagSerializer, IngredientSerializer)
@@ -37,18 +37,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(methods=['POST', 'DELETE'], detail=True,
             permission_classes=[permissions.IsAuthenticated],
             url_path='favorite', url_name='favorite')
-    def favorite(self, request, pk=None):
+    def favorite(self, request, pk):
+        recipe = get_object_or_404(Recipe, id=pk)
+        serializer = FavoriteSerializer(
+            data={'user': request.user.id, 'recipe': recipe.id}
+        )
         if request.method == 'POST':
-            recipe = get_object_or_404(Recipe, id=pk)
-            Favorite.objects.create(
-                user=request.user,
-                recipe=recipe
-            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save(recipe=recipe, user=request.user)
             serializer = FavoriteAndShoppingCartSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        obj = Favorite.objects.filter(user=request.user, recipe__id=pk)
-        obj.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if request.method == 'DELETE':
+            obj = Favorite.objects.get(user=request.user, recipe__id=pk)
+            obj.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['POST', 'DELETE'], detail=True,
             permission_classes=[permissions.IsAuthenticated],
