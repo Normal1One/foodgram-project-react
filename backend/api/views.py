@@ -38,17 +38,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(methods=['POST', 'DELETE'], detail=True,
             permission_classes=[permissions.IsAuthenticated],
             url_path='favorite', url_name='favorite')
-    def favorite(self, request, pk):
-        recipe = get_object_or_404(Recipe, id=pk)
-        serializer = FavoriteSerializer(
-            data={'user': request.user.id, 'recipe': recipe.id}
-        )
+    def favorite(self, request, pk=None):
         if request.method == 'POST':
-            serializer.is_valid(raise_exception=True)
-            serializer.save(recipe=recipe, user=request.user)
+            recipe = get_object_or_404(Recipe, id=pk)
+            Favorite.objects.create(
+                user=request.user,
+                recipe=recipe
+            )
             serializer = FavoriteAndShoppingCartSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        obj = Favorite.objects.get(user=request.user, recipe__id=pk)
+        obj = Favorite.objects.filter(user=request.user, recipe__id=pk)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
