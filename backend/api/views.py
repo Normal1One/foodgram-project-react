@@ -13,7 +13,7 @@ from .serializers import (FavoriteAndShoppingCartSerializer,
 from .permissions import IsAdminAuthorOrReadOnly
 from .models import (IngredientAmount, ShoppingCart, Favorite, Recipe,
                      Tag, Ingredient)
-from .filters import IngredientsFilter, TagsFilter
+from .filters import IngredientsFilter, RecipesFilter
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -31,26 +31,12 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminAuthorOrReadOnly]
+    queryset = Recipe.objects.all()
     pagination_class = FoodgramPagination
-    filter_class = TagsFilter
-
-    def get_queryset(self):
-        queryset = Recipe.objects.all()
-        is_in_shopping_cart = self.request.query_params.get(
-            'is_in_shopping_cart')
-        is_favorited = self.request.query_params.get('is_favorited')
-        cart = ShoppingCart.objects.filter(user=self.request.user.id)
-        favorite = Favorite.objects.filter(user=self.request.user.id)
-
-        if is_in_shopping_cart == 'true':
-            queryset = queryset.filter(purchase__in=cart)
-        elif is_in_shopping_cart == 'false':
-            queryset = queryset.exclude(purchase__in=cart)
-        if is_favorited == 'true':
-            queryset = queryset.filter(favorites__in=favorite)
-        elif is_favorited == 'false':
-            queryset = queryset.exclude(favorites__in=favorite)
-        return queryset.all()
+    filter_class = RecipesFilter
+    filterset_fields = (
+        'is_favorited', 'author', 'is_in_shopping_cart', 'tags'
+    )
 
     def get_serializer_class(self):
         if self.request.method in ['GET']:
@@ -64,7 +50,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = get_object_or_404(Recipe, id=pk)
         serializer = FavoriteSerializer(
             data={'user': request.user.id, 'recipe': recipe.id},
-            context={'request': request}
         )
         if request.method == 'POST':
             serializer.is_valid(raise_exception=True)
@@ -82,7 +67,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = get_object_or_404(Recipe, id=pk)
         serializer = ShoppingCartSerializer(
             data={'user': request.user.id, 'recipe': recipe.id},
-            context={'request': request}
         )
         if request.method == 'POST':
             serializer.is_valid(raise_exception=True)
