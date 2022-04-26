@@ -156,8 +156,8 @@ class FavoriteAndShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source='user')
-    recipe = serializers.ReadOnlyField(source='recipe')
+    user = serializers.IntegerField(source='user.id')
+    recipe = serializers.IntegerField(source='recipe.id')
 
     class Meta:
         model = Favorite
@@ -171,8 +171,8 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source='user')
-    recipe = serializers.ReadOnlyField(source='recipe')
+    user = serializers.IntegerField(source='user.id')
+    recipe = serializers.IntegerField(source='recipe.id')
 
     class Meta:
         model = ShoppingCart
