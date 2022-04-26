@@ -189,7 +189,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         user = attrs['user']['id']
         recipe = attrs['recipe']['id']
-        if ShoppingCart.objects.filter(user=user, recipe__is=recipe).exists():
+        if ShoppingCart.objects.filter(user=user, recipe__id=recipe).exists():
             raise serializers.ValidationError(
                 'Этот рецепт уже есть в списке покупок'
             )
