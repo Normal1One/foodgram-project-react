@@ -113,11 +113,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
 class ShoppingCartView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
+    http_method_names = ['get', 'delete']
 
-    @action(methods=['POST'],
-            permission_classes=[permissions.IsAuthenticated],
-            detail=True)
-    def post(self, request, pk):
+    def get(self, request, pk):
         recipe = get_object_or_404(Recipe, id=pk)
         serializer = ShoppingCartSerializer(
             data={'user': request.user.id, 'recipe': recipe.id},
@@ -128,9 +126,6 @@ class ShoppingCartView(viewsets.ModelViewSet):
         serializer = FavoriteAndShoppingCartSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(methods=['DELETE'],
-            permission_classes=[permissions.IsAuthenticated],
-            detail=True)
     def delete(self, request, pk):
         cart = get_object_or_404(
             ShoppingCart, user=request.user, recipe__id=pk)
