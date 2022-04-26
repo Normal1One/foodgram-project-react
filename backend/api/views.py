@@ -37,7 +37,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Recipe.objects.all()
-        is_in_shopping_cart = self.request.query_params.get('is_in_shopping_cart')
+        is_in_shopping_cart = self.request.query_params.get(
+            'is_in_shopping_cart')
         is_favorited = self.request.query_params.get('is_favorited')
         cart = ShoppingCart.objects.filter(user=self.request.user.id)
         favorite = Favorite.objects.filter(user=self.request.user.id)
@@ -126,8 +127,10 @@ class ShoppingCartView(viewsets.ModelViewSet):
         serializer = FavoriteAndShoppingCartSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(methods=['DELETE'], permission_classes=[permissions.IsAuthenticated])
+    @action(methods=['DELETE'],
+            permission_classes=[permissions.IsAuthenticated])
     def delete(self, request, pk):
-        cart = get_object_or_404(ShoppingCart, user=request.user, recipe__id=pk)
+        cart = get_object_or_404(
+            ShoppingCart, user=request.user, recipe__id=pk)
         cart.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
