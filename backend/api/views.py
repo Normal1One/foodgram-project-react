@@ -5,7 +5,8 @@ from rest_framework.decorators import action
 from rest_framework import viewsets, permissions, status
 
 from .pagination import FoodgramPagination
-from .serializers import (FavoriteAndShoppingCartSerializer, FavoriteSerializer,
+from .serializers import (FavoriteAndShoppingCartSerializer,
+                          FavoriteSerializer,
                           RecipeReadSerializer,
                           RecipeWriteSerializer,
                           TagSerializer, IngredientSerializer)
