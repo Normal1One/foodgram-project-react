@@ -41,8 +41,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     )
     author = CustomUserSerializer(read_only=True)
     ingredients = serializers.SerializerMethodField()
-    is_favorite = serializers.SerializerMethodField()
-    is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -52,20 +50,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         objects = IngredientAmount.objects.filter(recipe=obj)
         serializer = IngredientAmountSerializer(objects, many=True)
         return serializer.data
-
-    def get_is_favorite(self, obj):
-        request = self.context.get('request')
-        if request is None or request.user.is_anonymous:
-            return False
-        return Favorite.objects.filter(
-            user=request.user, recipe=obj).exists()
-
-    def get_is_in_shopping_cart(self, obj):
-        request = self.context.get('request')
-        if request is None or request.user.is_anonymous:
-            return False
-        return ShoppingCart.objects.filter(
-            user=request.user, recipe=obj).exists()
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -119,6 +103,22 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 class RecipeReadSerializer(RecipeWriteSerializer):
     tags = TagSerializer(read_only=True, many=True)
     image = serializers.ImageField()
+    is_favorite = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
+
+    def get_is_favorite(self, obj):
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            return False
+        return Favorite.objects.filter(
+            user=request.user, recipe=obj).exists()
+
+    def get_is_in_shopping_cart(self, obj):
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            return False
+        return ShoppingCart.objects.filter(
+            user=request.user, recipe=obj).exists()
 
     class Meta:
         model = Recipe
