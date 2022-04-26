@@ -63,15 +63,34 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def favorite(self, request, pk):
         recipe = get_object_or_404(Recipe, id=pk)
         serializer = FavoriteSerializer(
-            data={'user': request.user.id, 'recipe': recipe.id}
+            data={'user': request.user.id, 'recipe': recipe.id},
+            context={'request': request}
         )
         if request.method == 'POST':
             serializer.is_valid(raise_exception=True)
             serializer.save(recipe=recipe, user=request.user)
             serializer = FavoriteAndShoppingCartSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        obj = get_object_or_404(Favorite, user=request.user, recipe__id=pk)
-        obj.delete()
+        recipe = get_object_or_404(Favorite, user=request.user, recipe__id=pk)
+        recipe.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(methods=['POST', 'DELETE'], detail=True,
+            permission_classes=[permissions.IsAuthenticated],
+            url_path='shopping_cart', url_name='shopping_cart')
+    def shopping_cart(self, request, pk):
+        recipe = get_object_or_404(Recipe, id=pk)
+        serializer = ShoppingCartSerializer(
+            data={'user': request.user.id, 'recipe': recipe.id},
+            context={'request': request}
+        )
+        if request.method == 'POST':
+            serializer.is_valid(raise_exception=True)
+            serializer.save(recipe=recipe, user=request.user)
+            serializer = FavoriteAndShoppingCartSerializer(recipe)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        cart = get_object_or_404(ShoppingCart, user=request.user, recipe__id=pk)
+        cart.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['GET'], detail=False,
@@ -109,25 +128,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
         response['Content-Disposition'] = ('attachment;'
                                            'filename="shopping_list.txt"')
         return response
-
-
-class ShoppingCartView(views.APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    http_method_names = ['post', 'delete']
-
-    def post(self, request, pk):
-        recipe = get_object_or_404(Recipe, id=pk)
-        serializer = ShoppingCartSerializer(
-            data={'user': request.user.id, 'recipe': recipe.id},
-            context={'request': request}
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save(recipe=recipe, user=request.user)
-        serializer = FavoriteAndShoppingCartSerializer(recipe)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def delete(self, request, pk):
-        cart = get_object_or_404(
-            ShoppingCart, user=request.user, recipe__id=pk)
-        cart.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
