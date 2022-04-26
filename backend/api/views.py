@@ -5,9 +5,9 @@ from rest_framework.decorators import action
 from rest_framework import viewsets, permissions, status
 
 from .pagination import FoodgramPagination
-from .serializers import (FavoriteAndShoppingCartSerializer,
+from .serializers import (FavoriteAndShoppingCartSerializer, FavoriteSerializer,
                           RecipeReadSerializer,
-                          RecipeWriteSerializer,
+                          RecipeWriteSerializer, ShoppingCartSerializer,
                           TagSerializer, IngredientSerializer)
 from .permissions import IsAdminAuthorOrReadOnly
 from .models import (IngredientAmount, ShoppingCart, Favorite, Recipe,
@@ -38,12 +38,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=[permissions.IsAuthenticated],
             url_path='favorite', url_name='favorite')
     def favorite(self, request, pk=None):
+        recipe = get_object_or_404(Recipe, id=pk)
+        serializer = FavoriteSerializer(
+            data={'user': request.user, 'recipe': recipe}
+        )
         if request.method == 'POST':
-            recipe = get_object_or_404(Recipe, id=pk)
-            Favorite.objects.create(
-                user=request.user,
-                recipe=recipe
-            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save(recipe=recipe, user=request.user)
             serializer = FavoriteAndShoppingCartSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         obj = Favorite.objects.filter(user=request.user, recipe__id=pk)
@@ -54,12 +55,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=[permissions.IsAuthenticated],
             url_path='shopping_cart', url_name='shopping_cart')
     def shopping_cart(self, request, pk=None):
+        recipe = get_object_or_404(Recipe, id=pk)
+        serializer = ShoppingCartSerializer(
+            data={'user': request.user, 'recipe': recipe}
+        )
         if request.method == 'POST':
-            recipe = get_object_or_404(Recipe, id=pk)
-            ShoppingCart.objects.create(
-                user=request.user,
-                recipe=recipe
-            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save(recipe=recipe, user=request.user)
             serializer = FavoriteAndShoppingCartSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         obj = ShoppingCart.objects.filter(user=request.user, recipe__id=pk)

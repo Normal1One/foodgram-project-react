@@ -153,3 +153,33 @@ class FavoriteAndShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'cooking_time', 'image')
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user')
+    recipe = serializers.ReadOnlyField(source='recipe')
+
+    class Meta:
+        model = Favorite
+        fields = ('user', 'recipe')
+
+    def create(self, validated_data):
+        user = validated_data['user']
+        recipe = validated_data['recipe']
+        Favorite.objects.get_or_create(user=user, recipe=recipe)
+        return validated_data
+
+
+class ShoppingCartSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user')
+    recipe = serializers.ReadOnlyField(source='recipe')
+
+    class Meta:
+        model = ShoppingCart
+        fields = ('user', 'recipe')
+
+    def create(self, validated_data):
+        user = validated_data['user']
+        recipe = validated_data['recipe']
+        ShoppingCart.objects.get_or_create(user=user, recipe=recipe)
+        return validated_data

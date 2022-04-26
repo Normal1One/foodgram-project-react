@@ -137,7 +137,7 @@ const RecipeEdit = ({ onItemDelete }) => {
                 return alert(non_field_errors.join(', '))
               }
               if (ingredients) {
-                return alert(`Ингредиенты: ${ingredients.filter(item => Object.keys(item).length).map(item => {
+                return alert(`Ингридиенты: ${ingredients.filter(item => Object.keys(item).length).map(item => {
                   const error = item[Object.keys(item)[0]]
                   return error && error.join(' ,')
                 })[0]}`)
@@ -172,7 +172,7 @@ const RecipeEdit = ({ onItemDelete }) => {
         <div className={styles.ingredients}>
           <div className={styles.ingredientsInputs}>
             <Input
-              label='Ингредиенты'
+              label='Ингридиенты'
               className={styles.ingredientsNameInput}
               inputClassName={styles.ingredientsInput}
               labelClassName={styles.ingredientsLabel}
@@ -242,7 +242,7 @@ const RecipeEdit = ({ onItemDelete }) => {
               })
             }}
           >
-            Добавить ингредиент
+            Добавить ингридиент
           </div>
         </div>
         <div className={styles.cookingTime}>
