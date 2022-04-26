@@ -6,9 +6,8 @@ from rest_framework import viewsets, permissions, status
 
 from .pagination import FoodgramPagination
 from .serializers import (FavoriteAndShoppingCartSerializer,
-                          FavoriteSerializer,
                           RecipeReadSerializer,
-                          RecipeWriteSerializer, ShoppingCartSerializer,
+                          RecipeWriteSerializer,
                           TagSerializer, IngredientSerializer)
 from .permissions import IsAdminAuthorOrReadOnly
 from .models import (IngredientAmount, ShoppingCart, Favorite, Recipe,
@@ -52,7 +51,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
  
-
     @action(methods=['POST', 'DELETE'], detail=True,
             permission_classes=[permissions.IsAuthenticated],
             url_path='shopping_cart', url_name='shopping_cart')
