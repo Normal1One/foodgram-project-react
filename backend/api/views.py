@@ -31,7 +31,6 @@ class IngredientViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminAuthorOrReadOnly]
     pagination_class = FoodgramPagination
-    filter_class = RecipesFilter
     queryset = Recipe.objects.all()
     serializer_class = RecipeWriteSerializer
 
