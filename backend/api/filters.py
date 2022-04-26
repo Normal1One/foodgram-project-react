@@ -1,25 +1,24 @@
-from django_filters import (
-    BooleanFilter, FilterSet, CharFilter, AllValuesMultipleFilter)
+import django_filters as filters
 from django_filters.widgets import BooleanWidget
 
 from .models import Ingredient, Recipe
 
 
-class IngredientsFilter(FilterSet):
-    name = CharFilter(field_name='name', lookup_expr='istartswith')
+class IngredientsFilter(filters.FilterSet):
+    name = filters.CharFilter(field_name='name', lookup_expr='istartswith')
 
     class Meta:
         model = Ingredient
         fields = ('name', 'measurement_unit')
 
 
-class RecipesFilter(FilterSet):
-    tags = AllValuesMultipleFilter(field_name='tags__slug')
-    is_favorited = BooleanFilter(
+class RecipesFilter(filters.FilterSet):
+    tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
+    is_favorited = filters.BooleanFilter(
         method='get_favorite',
         widget=BooleanWidget()
     )
-    is_in_shopping_cart = BooleanFilter(
+    is_in_shopping_cart = filters.BooleanFilter(
         method='get_is_in_shopping_cart',
         widget=BooleanWidget()
     )
