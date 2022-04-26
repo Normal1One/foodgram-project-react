@@ -163,6 +163,14 @@ class FavoriteSerializer(serializers.ModelSerializer):
         model = Favorite
         fields = ('user', 'recipe')
 
+    def validate(self, attrs):
+        user = attrs['user']['id']
+        recipe = attrs['recipe']['id']
+        if Favorite.objects.filter(user=user, recipe__is=recipe).exists():
+            raise serializers.ValidationError(
+                'Этот рецепт уже есть в избранном'
+            )
+
     def create(self, validated_data):
         user = validated_data['user']
         recipe = validated_data['recipe']
@@ -177,6 +185,14 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = ('user', 'recipe')
+
+    def validate(self, attrs):
+        user = attrs['user']['id']
+        recipe = attrs['recipe']['id']
+        if ShoppingCart.objects.filter(user=user, recipe__is=recipe).exists():
+            raise serializers.ValidationError(
+                'Этот рецепт уже есть в списке покупок'
+            )
 
     def create(self, validated_data):
         user = validated_data['user']
