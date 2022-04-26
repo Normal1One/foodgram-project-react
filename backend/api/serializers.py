@@ -166,7 +166,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         user = attrs['user']['id']
         recipe = attrs['recipe']['id']
-        if Favorite.objects.filter(user=user, recipe__is=recipe).exists():
+        if Favorite.objects.filter(user=user, recipe__id=recipe).exists():
             raise serializers.ValidationError(
                 'Этот рецепт уже есть в избранном'
             )
