@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, views
 
 from .pagination import FoodgramPagination
 from .serializers import (FavoriteAndShoppingCartSerializer,
@@ -111,7 +111,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return response
 
 
-class ShoppingCartView(viewsets.ModelViewSet):
+class ShoppingCartView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
     http_method_names = ['get', 'delete']
 
