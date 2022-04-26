@@ -31,7 +31,6 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminAuthorOrReadOnly]
-    queryset = Recipe.objects.all()
     pagination_class = FoodgramPagination
     filter_class = TagsFilter
 

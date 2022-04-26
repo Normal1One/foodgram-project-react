@@ -12,7 +12,7 @@ router.register('ingredients', IngredientViewSet, basename='ingredients')
 router.register('recipes', RecipeViewSet, basename='recipes')
 
 urlpatterns = [
-    path('', include(router.urls)),
     path('recipes/<int:pk>/shopping_cart/',
-         ShoppingCartView.as_view(), name='shopping_cart')
+         ShoppingCartView.as_view(), name='shopping_cart'),
+    path('', include(router.urls)),
 ]
