@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import viewsets, permissions, status
@@ -34,6 +35,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     pagination_class = FoodgramPagination
     filter_class = RecipesFilter
+    filter_backends = [DjangoFilterBackend]
     filterset_fields = (
         'is_favorited', 'author', 'is_in_shopping_cart', 'tags'
     )
