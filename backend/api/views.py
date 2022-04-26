@@ -105,13 +105,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                            'filename="shopping_list.pdf"')
         return response
 
+    def get_serializer_class(self):
+        if self.request.method in ['GET']:
+            return RecipeReadSerializer
+        return RecipeWriteSerializer
+
+
 class FavoriteViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Favorite.objects.all()
     pagination_class = FoodgramPagination
     filter_class = TagsFilter
-
-    def get_serializer_class(self):
-        if self.request.method in ['GET']:
-            return RecipeReadSerializer
-        return RecipeWriteSerializer
