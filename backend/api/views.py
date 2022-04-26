@@ -6,8 +6,9 @@ from rest_framework import viewsets, permissions, status
 
 from .pagination import FoodgramPagination
 from .serializers import (FavoriteAndShoppingCartSerializer,
+                          FavoriteSerializer,
                           RecipeReadSerializer,
-                          RecipeWriteSerializer,
+                          RecipeWriteSerializer, ShoppingCartSerializer,
                           TagSerializer, IngredientSerializer)
 from .permissions import IsAdminAuthorOrReadOnly
 from .models import (IngredientAmount, ShoppingCart, Favorite, Recipe,
@@ -34,35 +35,42 @@ class RecipeViewSet(viewsets.ModelViewSet):
     pagination_class = FoodgramPagination
     filter_class = TagsFilter
 
-    @action(methods=['POST', 'DELETE'], detail=True,
-            permission_classes=[permissions.IsAuthenticated],
-            url_path='favorite', url_name='favorite')
-    def favorite(self, request, pk=None):
-        if request.method == 'POST':
-            recipe = get_object_or_404(Recipe, id=pk)
-            Favorite.objects.create(
-                user=request.user,
-                recipe=recipe
-            )
-            serializer = FavoriteAndShoppingCartSerializer(recipe)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        obj = Favorite.objects.filter(user=request.user, recipe__id=pk)
-        obj.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def get_queryset(self):
+        queryset = Recipe.objects.all()
+        is_in_shopping_cart = self.request.query_params.get('is_in_shopping_cart')
+        is_favorited = self.request.query_params.get('is_favorited')
+        cart = ShoppingCart.objects.filter(user=self.request.user.id)
+        favorite = Favorite.objects.filter(user=self.request.user.id)
+
+        if is_in_shopping_cart == 'true':
+            queryset = queryset.filter(purchase__in=cart)
+        elif is_in_shopping_cart == 'false':
+            queryset = queryset.exclude(purchase__in=cart)
+        if is_favorited == 'true':
+            queryset = queryset.filter(favorites__in=favorite)
+        elif is_favorited == 'false':
+            queryset = queryset.exclude(favorites__in=favorite)
+        return queryset.all()
+
+    def get_serializer_class(self):
+        if self.request.method in ['GET']:
+            return RecipeReadSerializer
+        return RecipeWriteSerializer
 
     @action(methods=['POST', 'DELETE'], detail=True,
             permission_classes=[permissions.IsAuthenticated],
             url_path='shopping_cart', url_name='shopping_cart')
-    def shopping_cart(self, request, pk=None):
+    def shopping_cart(self, request, pk):
+        recipe = get_object_or_404(Recipe, id=pk)
+        serializer = FavoriteSerializer(
+            data={'user': request.user.id, 'recipe': recipe.id}
+        )
         if request.method == 'POST':
-            recipe = get_object_or_404(Recipe, id=pk)
-            ShoppingCart.objects.create(
-                user=request.user,
-                recipe=recipe
-            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save(recipe=recipe)
             serializer = FavoriteAndShoppingCartSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        obj = ShoppingCart.objects.filter(user=request.user, recipe__id=pk)
+        obj = get_object_or_404(Favorite, user=request.user, recipe__id=pk)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -97,12 +105,29 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 f'{buying_list[item]["measurement_unit"]}\n'
             )
         response = HttpResponse(shopping_list,
-                                content_type='application/pdf')
-        response['Content-Disposition'] = ('inline;'
-                                           'filename="shopping_list.pdf"')
+                                content_type='text/plain')
+        response['Content-Disposition'] = ('attachment;'
+                                           'filename="shopping_list.txt"')
         return response
 
-    def get_serializer_class(self):
-        if self.request.method in ['GET']:
-            return RecipeReadSerializer
-        return RecipeWriteSerializer
+
+class ShoppingCartView(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(methods=['GET'], permission_classes=[permissions.IsAuthenticated])
+    def get(self, request, pk):
+        recipe = get_object_or_404(Recipe, id=pk)
+        serializer = ShoppingCartSerializer(
+            data={'user': request.user.id, 'recipe': recipe.id},
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(recipe=recipe, user=request.user)
+        serializer = FavoriteAndShoppingCartSerializer(recipe)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(methods=['DELETE'], permission_classes=[permissions.IsAuthenticated])
+    def delete(self, request, pk):
+        cart = get_object_or_404(ShoppingCart, user=request.user, recipe__id=pk)
+        cart.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
