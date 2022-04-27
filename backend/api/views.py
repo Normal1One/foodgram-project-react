@@ -8,7 +8,9 @@ from rest_framework import viewsets, permissions, status
 from .pagination import FoodgramPagination
 from .serializers import (FavoriteAndShoppingCartSerializer,
                           FavoriteSerializer,
-                          RecipeWriteSerializer, ShoppingCartSerializer,
+                          RecipeWriteSerializer,
+                          ShoppingCartSerializer,
+                          RecipeReadSerializer,
                           TagSerializer, IngredientSerializer)
 from .permissions import IsAdminAuthorOrReadOnly
 from .models import (IngredientAmount, ShoppingCart, Favorite, Recipe,
@@ -32,13 +34,17 @@ class IngredientViewSet(viewsets.ModelViewSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminAuthorOrReadOnly]
     queryset = Recipe.objects.all()
-    serializer_class = RecipeWriteSerializer
     pagination_class = FoodgramPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = (
         'is_favorited', 'author', 'is_in_shopping_cart', 'tags'
     )
     filter_class = RecipeFilter
+
+    def get_serializer_class(self):
+        if self.request.method in ['GET']:
+            return RecipeReadSerializer
+        return RecipeWriteSerializer
 
     @action(methods=['POST', 'DELETE'], detail=True,
             permission_classes=[permissions.IsAuthenticated],

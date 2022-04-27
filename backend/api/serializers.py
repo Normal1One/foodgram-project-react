@@ -117,6 +117,14 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return instance
 
 
+class RecipeReadSerializer(RecipeWriteSerializer):
+    tags = TagSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Recipe
+        fields = '__all__'
+
+
 class FollowSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='author.id')
     username = serializers.ReadOnlyField(source='author.uesrname')
