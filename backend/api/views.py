@@ -59,8 +59,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.save(recipe=recipe, user=request.user)
             serializer = FavoriteAndShoppingCartSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        recipe = get_object_or_404(Favorite, user=request.user, recipe__id=pk)
-        recipe.delete()
+        favorite = Favorite.objects.get(
+            user=request.user,
+            recipe__id=pk
+        )
+        favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['POST', 'DELETE'], detail=True,
