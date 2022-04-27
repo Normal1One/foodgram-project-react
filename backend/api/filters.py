@@ -12,7 +12,7 @@ class IngredientsFilter(filters.FilterSet):
         fields = ('name', 'measurement_unit')
 
 
-class RecipesFilter(filters.FilterSet):
+class RecipeFilter(filters.FilterSet):
     tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
     is_favorited = filters.BooleanFilter(
         method='get_favorite',

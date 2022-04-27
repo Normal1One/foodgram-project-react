@@ -13,7 +13,7 @@ from .serializers import (FavoriteAndShoppingCartSerializer,
 from .permissions import IsAdminAuthorOrReadOnly
 from .models import (IngredientAmount, ShoppingCart, Favorite, Recipe,
                      Tag, Ingredient)
-from .filters import IngredientsFilter, RecipesFilter
+from .filters import IngredientsFilter, RecipeFilter
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -38,7 +38,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filterset_fields = (
         'is_favorited', 'author', 'is_in_shopping_cart', 'tags'
     )
-    filter_class = RecipesFilter
+    filter_class = RecipeFilter
 
     @action(methods=['POST', 'DELETE'], detail=True,
             permission_classes=[permissions.IsAuthenticated],
