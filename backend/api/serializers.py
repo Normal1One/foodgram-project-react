@@ -93,7 +93,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             ingredient_list.append(ingredient)
         for ingredient_item in ingredients:
             amount = ingredient_item['amount']
-            if amount < 1:
+            if int(amount) < 1:
                 raise serializers.ValidationError({
                     'ingredients':
                         'Количество не может быть меньше одного'})
