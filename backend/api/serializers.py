@@ -134,7 +134,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
 
 class RecipeReadSerializer(RecipeWriteSerializer):
-    ingredients = IngredientSerializer(read_only=True, many=True)
+    ingredients = IngredientAmountSerializer(read_only=True, many=True)
     tags = TagSerializer(read_only=True, many=True)
 
     class Meta:
