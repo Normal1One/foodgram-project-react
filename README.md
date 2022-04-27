@@ -34,7 +34,7 @@ docker-compose exec backend python manage.py loadjson --path 'api/data/ingredien
 Никита Лавров
 
 ### Адрес сервера
-http://51.250.96.87/
+http://84.201.138.102/
 
 Email администратора: admin@gmail.com
 Password администратора: admin
