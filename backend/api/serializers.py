@@ -27,6 +27,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='ingredient.id', read_only=True)
     name = serializers.ReadOnlyField(source='ingredient.name', read_only=True)
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit', read_only=True)
@@ -133,6 +134,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
 
 class RecipeReadSerializer(RecipeWriteSerializer):
+    ingredients = IngredientSerializer(read_only=True, many=True)
     tags = TagSerializer(read_only=True, many=True)
 
     class Meta:
