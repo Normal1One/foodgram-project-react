@@ -30,9 +30,9 @@ class IngredientViewSet(viewsets.ModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminAuthorOrReadOnly]
-    pagination_class = FoodgramPagination
     queryset = Recipe.objects.all()
     serializer_class = RecipeWriteSerializer
+    pagination_class = FoodgramPagination
 
     @action(methods=['POST', 'DELETE'], detail=True,
             permission_classes=[permissions.IsAuthenticated],
