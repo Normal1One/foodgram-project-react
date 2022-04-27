@@ -27,9 +27,9 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
-    name = serializers.ReadOnlyField(source='ingredient.name')
+    name = serializers.ReadOnlyField(source='ingredient.name', read_only=True)
     measurement_unit = serializers.ReadOnlyField(
-        source='ingredient.measurement_unit')
+        source='ingredient.measurement_unit', read_only=True)
 
     class Meta:
         model = IngredientAmount
@@ -51,7 +51,7 @@ class IngredientCreateSerializer(IngredientAmountSerializer):
         ingredients_in_recipe = []
         for item in IngredientAmount.objects.filter(ingredient=instance):
             ingredients_in_recipe.append(item)
-        return IngredientAmountSerializer(ingredients_in_recipe).data()
+        return IngredientAmountSerializer(ingredients_in_recipe).data
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
