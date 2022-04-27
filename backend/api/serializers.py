@@ -18,41 +18,20 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    name = serializers.ReadOnlyField()
-    measurement_unit = serializers.ReadOnlyField()
-
     class Meta:
         model = Ingredient
         fields = '__all__'
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source='ingredient.id', read_only=True)
-    name = serializers.ReadOnlyField(source='ingredient.name', read_only=True)
+    id = serializers.ReadOnlyField(source='ingredient.id')
+    name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
-        source='ingredient.measurement_unit', read_only=True)
+        source='ingredient.measurement_unit')
 
     class Meta:
         model = IngredientAmount
         fields = ('id', 'name', 'measurement_unit', 'amount')
-
-
-class IngredientCreateSerializer(IngredientAmountSerializer):
-    id = serializers.IntegerField(write_only=True)
-    amount = serializers.IntegerField(write_only=True)
-
-    def validate_amount(self, amount):
-        if amount < 1:
-            raise serializers.ValidationError(
-                'Значение должно быть больше 0'
-            )
-        return amount
-
-    def to_representation(self, instance):
-        ingredients_in_recipe = []
-        for item in IngredientAmount.objects.filter(ingredient=instance):
-            ingredients_in_recipe.append(item)
-        return IngredientAmountSerializer(ingredients_in_recipe).data
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
@@ -62,13 +41,18 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all()
     )
     author = CustomUserSerializer(read_only=True)
-    ingredients = IngredientCreateSerializer(many=True)
+    ingredients = serializers.SerializerMethodField()
     is_favorite = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = '__all__'
+
+    def get_ingredients(self, obj):
+        objects = IngredientAmount.objects.filter(recipe=obj)
+        serializer = IngredientAmountSerializer(objects, many=True)
+        return serializer.data
 
     def get_is_favorite(self, obj):
         request = self.context.get('request')
@@ -107,6 +91,12 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                 id=ingredient_item['id']
             )
             ingredient_list.append(ingredient)
+        for ingredient_item in ingredients:
+            amount=ingredient_item['amount']
+            if amount < 1:
+                raise serializers.ValidationError({
+                    'ingredients':
+                        'Количество не может быть меньше одного'})
         data['ingredients'] = ingredients
         return data
 
@@ -134,7 +124,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
 
 class RecipeReadSerializer(RecipeWriteSerializer):
-    ingredients = IngredientAmountSerializer(read_only=True, many=True)
     tags = TagSerializer(read_only=True, many=True)
 
     class Meta:
