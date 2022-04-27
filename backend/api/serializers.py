@@ -17,6 +17,15 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class IngredientSerializer(serializers.ModelSerializer):
+    name = serializers.ReadOnlyField()
+    measurement_unit = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Ingredient
+        fields = '__all__'
+
+
 class IngredientAmountSerializer(serializers.ModelSerializer):
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
@@ -27,7 +36,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
-class IngredientSerializer(IngredientAmountSerializer):
+class IngredientCreateSerializer(IngredientAmountSerializer):
     id = serializers.IntegerField(write_only=True)
     amount = serializers.IntegerField(write_only=True)
 
