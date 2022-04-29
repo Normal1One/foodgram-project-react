@@ -97,7 +97,9 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             amount = ingredient['amount']
             if int(amount) < 1:
                 raise serializers.ValidationError({
-                    'amount': f'Количество {amount} ингредиента не может быть меньше 1'})
+                    'amount': f'Количество {amount}'
+                               'ингредиента не может быть меньше 1'
+                })
         return data
 
     def list_ingredients(self, ingredients, recipe):
