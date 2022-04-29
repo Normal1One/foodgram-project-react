@@ -92,6 +92,12 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             )
             ingredient_list.append(ingredient)
         data['ingredients'] = ingredients
+        ingredients_set = data['ingredients']
+        for ingredient in ingredients_set:
+            amount = ingredient['amount']
+            if amount < 1:
+                raise serializers.ValidationError({
+                    'amount': 'Количество ингредиента не может быть меньше 1'})
         return data
 
     def list_ingredients(self, ingredients, recipe):
