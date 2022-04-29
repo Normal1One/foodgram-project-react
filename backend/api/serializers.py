@@ -86,11 +86,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                     'В рецепте должен быть минимум один ингредиент!'})
         ingredient_list = []
         for ingredient_item in ingredients:
-            amount = ingredient_item['amount']
-            if int(amount) < 1:
-                raise serializers.ValidationError({
-                    'ingredients':
-                        'Количество не может быть меньше 1'})
             ingredient = get_object_or_404(
                 Ingredient,
                 id=ingredient_item['id']
