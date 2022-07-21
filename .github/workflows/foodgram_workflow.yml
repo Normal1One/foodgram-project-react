@@ -21,13 +21,6 @@ jobs:
     - name: Test with flake8
       run: |
         python -m flake8
-        echo ${{ secrets.DB_ENGINE }} | sed 's/./& /g'
-        echo ${{ secrets.DB_NAME }} | sed 's/./& /g'
-        echo ${{ secrets.POSTGRES_USER }} | sed 's/./& /g'
-        echo ${{ secrets.POSTGRES_PASSWORD }} | sed 's/./& /g'
-        echo ${{ secrets.DB_HOST }} | sed 's/./& /g'
-        echo ${{ secrets.DB_PORT }} | sed 's/./& /g'
-        echo ${{ secrets.SECRET_KEY }} | sed 's/./& /g'
   
   build_and_push_to_docker_hub:
     name: Push Doker image to Docker Hub
