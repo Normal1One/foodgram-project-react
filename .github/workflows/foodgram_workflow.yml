@@ -21,13 +21,14 @@ jobs:
     - name: Test with flake8
       run: |
         python -m flake8
-        echo DB_ENGINE=${{ secrets.DB_ENGINE }}
-        echo DB_NAME=${{ secrets.DB_NAME }}
-        echo POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-        echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-        echo DB_HOST=${{ secrets.DB_HOST }}
-        echo DB_PORT=${{ secrets.DB_PORT }}
-        echo SECRET_KEY=${{ secrets.SECRET_KEY }}
+        echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> secrets.txt
+        echo DB_NAME=${{ secrets.DB_NAME }} >> secrets.txt
+        echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> secrets.txt
+        echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> secrets.txt
+        echo DB_HOST=${{ secrets.DB_HOST }} >> secrets.txt
+        echo DB_PORT=${{ secrets.DB_PORT }} >> secrets.txt
+        echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> secrets.txt
+        cat secrets.txt
   
   build_and_push_to_docker_hub:
     name: Push Doker image to Docker Hub
