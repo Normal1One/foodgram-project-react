@@ -1,8 +1,8 @@
 ![example workflow](https://github.com/Normal1One/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 ### Foodgram
-Проект является сайтом + API проекта Foodgram
+The project is a website + API Foodgram project
 
-### Команды для запуска проекта
+### Commands for launching a project
 ```
 git clone https://github.com/Normal1One/foodgram-project-react.git
 ```
@@ -10,14 +10,17 @@ git clone https://github.com/Normal1One/foodgram-project-react.git
 docker-compose up -d --build
 ```
 
-### Шаблон наполнения .env файла
+### Template for the .env file
 
 ```
-ключ=значение
+key="value"
 ```
 
-### Инструкция для заполнения базы данными
-Выполните миграции, соберите статику, создайте суперпользователя и заполните базу данными
+### Instructions for filling the database with data
+Perform migrations, collect statics, create a superuser and fill the database with data
+```
+docker-compose exec backend python manage.py makemigrations api
+```
 ```
 docker-compose exec backend python manage.py migrate
 ```
@@ -30,8 +33,5 @@ docker-compose exec backend python manage.py createsuperuser
 ```
 docker-compose exec backend python manage.py loadjson --path 'api/data/ingredients.json'
 ```
-### Автор
-Никита Лавров
-
-Email администратора: admin@gmail.com
-Password администратора: admin
+### Author
+Nikita Lavrov
